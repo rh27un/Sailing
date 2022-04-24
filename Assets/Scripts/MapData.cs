@@ -44,6 +44,11 @@ public struct MapCoords
 	{
 		return new MapCoords((int)(transform.position.x), (int)(transform.position.z), transform.rotation.eulerAngles.y);
 	}
+
+    public override string ToString()
+    {
+		return $"{x}, {y}";
+    }
 }
 
 
@@ -82,6 +87,7 @@ public class MapData : MonoBehaviour
 	protected float panSensitivity;
 	[SerializeField]
 	protected Vector2 mapOffset;
+	protected Vector2 zoomOffset;
 
 	[SerializeField]
 	protected float imageScale;
@@ -145,7 +151,7 @@ public class MapData : MonoBehaviour
 
 		// TODO: update simulated points
 
-		if (!fadingIn && !fadingOut)
+		if (!fadingOut)
 		{
 			if (Input.GetButtonDown("Fire1"))
 			{
@@ -156,9 +162,16 @@ public class MapData : MonoBehaviour
 
 				mapOffset = Input.mousePosition - panStart;
 			}
-			zoom = Mathf.Clamp(zoom + Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * zoomSensitivity, zoomMin, zoomMax);
-			bgRect.anchoredPosition = mapOffset;
+			zoom = Mathf.Clamp(zoom + Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * zoomSensitivity * zoom, zoomMin, zoomMax);
+			//man am i bad at maths
+			var someConst = zoom;
+			var mousePos = (Vector2)bgRect.InverseTransformPoint(Input.mousePosition);
 			bgRect.localScale = Vector3.one * zoom;
+			var newMousePos = (Vector2)bgRect.InverseTransformPoint(Input.mousePosition);
+
+			var mouseDelta = mousePos - newMousePos;
+			zoomOffset += mouseDelta * someConst;
+			bgRect.anchoredPosition = mapOffset - zoomOffset;
 			foreach (var image in images)
 			{
 				var rect = image.Value.GetComponent<RectTransform>();
