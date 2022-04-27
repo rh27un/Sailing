@@ -8,12 +8,12 @@ public class ShipData
 	public string captainName;
 	public int crewNum;
 	public int maxHullPoints;
-	public Dictionary<CargoType, int> cargo = new Dictionary<CargoType, int>();
+	public Dictionary<CargoType, float> cargo = new Dictionary<CargoType, float>();
 	public int maxWeight;
 
-	public int GetWeight()
+	public float GetWeight()
 	{
-		int weight = 0;
+		float weight = 0;
 		foreach(var pair in cargo)
 		{
 			weight += (pair.Key.weight * pair.Value);
@@ -21,10 +21,10 @@ public class ShipData
 		return weight;
 	}
 
-	public int AddCargo(CargoType type, int amount, bool dontAddIfInsuficcientSpace = false)
+	public float AddCargo(CargoType type, int amount, bool dontAddIfInsuficcientSpace = false)
 	{
-		int spaceLeft = maxWeight - GetWeight();
-		int weightAdded = type.weight * amount;
+		float spaceLeft = maxWeight - GetWeight();
+		float weightAdded = type.weight * amount;
 		if (spaceLeft > weightAdded)
 		{
 			if (cargo.ContainsKey(type))
@@ -42,8 +42,8 @@ public class ShipData
 			if (dontAddIfInsuficcientSpace)
 				return amount;
 
-			int amountToAdd = spaceLeft / type.weight;
-			int remainder = amount - amountToAdd;
+			float amountToAdd = spaceLeft / type.weight;
+			float remainder = amount - amountToAdd;
 
 			if (cargo.ContainsKey(type))
 			{

@@ -1613,7 +1613,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 336934196}
-  m_LocalRotation: {x: 0.32237443, y: -0.000000025238068, z: 0.000000008594974, w: 0.94661224}
+  m_LocalRotation: {x: 0.3198212, y: -0.000000032605335, z: 0.000000011005932, w: 0.94747794}
   m_LocalPosition: {x: 0, y: 34.56, z: -40}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -2727,7 +2727,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 616272225}
-  m_LocalRotation: {x: 0.35172665, y: 0.00031545645, z: -0.000118528056, w: 0.93610275}
+  m_LocalRotation: {x: 0.35172665, y: 0.00031545645, z: -0.00011852806, w: 0.93610275}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -9997,6 +9997,7 @@ MonoBehaviour:
   cargoTypes: []
   settlements:
   - {fileID: 11400000, guid: 7f7d53e35b125e3408fed567a3dcd29b, type: 2}
+  liveSettlements: []
   map: {fileID: 150972414}
 --- !u!114 &1285813850
 MonoBehaviour:
@@ -10817,7 +10818,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1421798365}
-  m_LocalRotation: {x: 0.32237434, y: -0.000000025238066, z: 0.000000008594971, w: 0.9466123}
+  m_LocalRotation: {x: 0.31982115, y: -0.000000016302668, z: 0.0000000055029643, w: 0.94747794}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -11188,7 +11189,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1616448535}
-  m_LocalRotation: {x: 0.32141712, y: 0.00000006406302, z: -0.000000021744778, w: 0.94693774}
+  m_LocalRotation: {x: 0.32141715, y: 0.00000001629337, z: -0.0000000055304255, w: 0.94693774}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

@@ -34,6 +34,8 @@ public class WorldManager : MonoBehaviour
 	protected List<SimulatedShip> ships;
 	[SerializeField]
 	protected List<Settlement> settlements = new List<Settlement>();
+	[SerializeField]
+	protected List<Settlement> liveSettlements = new List<Settlement>();
 	private IEnumerator coroutine;
 	[SerializeField]
 	protected MapData map;
@@ -69,6 +71,13 @@ public class WorldManager : MonoBehaviour
 
 		StartCoroutine(coroutine);
 		map.AddSettlements(settlements);
+
+		foreach(var settlement in settlements)
+        {
+			var live = Instantiate(settlement);
+			live.SetupInventory();
+			liveSettlements.Add(live);
+        }
 	}
 
 	private void Tick()
