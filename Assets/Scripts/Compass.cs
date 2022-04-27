@@ -17,6 +17,6 @@ public class Compass : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        compass.uvRect = new Rect(player.localEulerAngles.y / 360f, 0, 1, 1);
+        compass.uvRect = new Rect(0.18f + (player.localEulerAngles.y / 360f), 0, 0.64f, 1);
     }
 }

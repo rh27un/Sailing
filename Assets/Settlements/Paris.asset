@@ -9,15 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bee7f69be201f9d47aca2b4806ad7271, type: 3}
-  m_Name: HarbourBay
+  m_Script: {fileID: 11500000, guid: dbde8e666601d1044bc02be4b0567534, type: 3}
+  m_Name: Paris
   m_EditorClassIdentifier: 
-  pointName: Harbour Bay
-  coords:
-    x: 117
-    y: 90
+  location:
+    x: 10
+    y: 10
     rotation: 0
-  visible: 1
-  type: 1
   faction: 3
-  associatedObject: {fileID: 0}

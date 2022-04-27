@@ -42,9 +42,9 @@ public class CameraRotation : MonoBehaviour
 			freeLookComponent.m_XAxis.m_MaxSpeed = 0;
 		}
 
-		if (freeLookComponent.m_YAxis.Value == 1f)
+		if (freeLookComponent.m_YAxis.Value > 0.95f)
 		{
-
+			Cursor.lockState = CursorLockMode.None;
 			mapData.gameObject.SetActive(true);
 			mapData.FadeIn();
 			gameObject.SetActive(false);

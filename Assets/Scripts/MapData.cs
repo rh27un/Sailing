@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 public enum MapType
 {
@@ -67,6 +68,7 @@ public class MapData : MonoBehaviour
 	protected Image bgImage;
 	protected RectTransform bgRect;
 	protected Dictionary<MapPoint, Image> images = new Dictionary<MapPoint, Image>();
+	protected Dictionary<string, MapPoint> mapPoints = new Dictionary<string, MapPoint>();
 	private bool fadingIn;
 	private bool fadingOut;
 	private float fadeStart;
@@ -96,10 +98,14 @@ public class MapData : MonoBehaviour
 	public float bgZoomSpeed;
 	public float bgPanSpeed;
 
+	[SerializeField]
+	protected GameObject infoPanel;
+
 	protected Transform shipList;
 	public Image DrawPoint(MapPoint mapPoint)
 	{
 		GameObject go = Instantiate(new GameObject(mapPoint.name), transform);
+		go.name = mapPoint.name;
 		Image image = go.AddComponent<Image>();
 		image.sprite = sprites[(int)mapPoint.type];
 		image.color = Color.clear;
@@ -108,6 +114,9 @@ public class MapData : MonoBehaviour
 		rect.anchoredPosition = MapCoords.ToVector2(mapPoint.coords) * zoom + mapOffset;
 		rect.localScale *= imageScale;
 		rect.rotation = Quaternion.Euler(0f, 0f, mapPoint.coords.rotation);
+		Button btn = go.AddComponent<Button>();
+		btn.onClick.AddListener(HandleButtonClick);
+		
 		return image;
 	}
 
@@ -117,29 +126,71 @@ public class MapData : MonoBehaviour
 		bgImage = GetComponent<Image>();
 		// Create map point for the player.
 		Transform playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-		var playerPoint = (LiveMapPoint)ScriptableObject.CreateInstance("LiveMapPoint");
-		playerPoint.name = "Player";
-		playerPoint.coords = MapCoords.FromTransform(playerTransform);
-		playerPoint.visible = true;
-		playerPoint.type = MapType.Player;
-		playerPoint.faction = MapFaction.Player;
-		playerPoint.associatedObject = playerTransform.gameObject;
-		playerPoint.tracking = playerTransform;
+		var playerPoint = new LiveMapPoint()
+		{
+			name = "Player",
+			coords = MapCoords.FromTransform(playerTransform),
+			visible = true,
+			type = MapType.Player,
+			faction = MapFaction.Player,
+			associatedObject = playerTransform.gameObject,
+			tracking = playerTransform
+		};
 		bgRect = gameObject.GetComponent<RectTransform>();
 		livePoints.Add(playerPoint);
 		// Draw player point
 		images.Add(livePoints[0], DrawPoint(livePoints[0]));
+		mapPoints.Add("Player", playerPoint);
 		// draw stationary points
 		foreach (MapPoint mapPoint in stationaryPoints)
 		{
 			images.Add(mapPoint, DrawPoint(mapPoint));
+			mapPoints.Add(mapPoint.name, mapPoint);
 		}
 	}
 
+	public void AddSettlements(List<Settlement> settlements)
+    {
+		foreach (Settlement settlement in settlements)
+        {
+			var mapPoint = new MapPoint()
+			{
+				name = settlement.name,
+				coords = settlement.location,
+				type = MapType.Settlement,
+				faction = settlement.faction
+			};
+
+			images.Add(mapPoint, DrawPoint(mapPoint));
+			mapPoints.Add(mapPoint.name, mapPoint);
+        }
+    }
+
+	public void HandleButtonClick()
+    {
+		var selectedPoint = mapPoints[EventSystem.current.currentSelectedGameObject.name];
+		infoPanel.transform.position = Input.mousePosition + Vector3.up * 10f;
+    }
+
 	public void Update()
 	{
-
-
+		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+		eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+		if(results.Count > 0 && results[0].gameObject != gameObject)
+        {
+			infoPanel.SetActive(true);
+			infoPanel.transform.position = Input.mousePosition + Vector3.up * 130f;
+			var selectedPoint = mapPoints[results[0].gameObject.name];
+			var texts = infoPanel.GetComponentsInChildren<Text>();
+			texts[0].text = selectedPoint.name;
+			texts[1].text = selectedPoint.type.ToString();
+			texts[2].text = selectedPoint.faction.ToString();
+        } else
+        {
+			infoPanel.SetActive(false);
+        }
 		// Update Live Points
 		foreach (var point in livePoints)
 		{
@@ -177,6 +228,7 @@ public class MapData : MonoBehaviour
 				var rect = image.Value.GetComponent<RectTransform>();
 				rect.localScale = new Vector3(1 / transform.localScale.x, 1 / transform.localScale.y, 1 / transform.localScale.z) * imageScale;
 			}
+			infoPanel.GetComponent<RectTransform>().localScale = new Vector3(1 / transform.localScale.x, 1 / transform.localScale.y, 1 / transform.localScale.z);
 			if (zoom == zoomMax)
 			{
 				FadeOut();
@@ -224,7 +276,7 @@ public class MapData : MonoBehaviour
 			{
 				fadingOut = false;
 				camRot.gameObject.SetActive(true);
-				camRot.SetYAxis(0.98f);
+				camRot.SetYAxis(0.94f);
 				gameObject.SetActive(false);
 
 			}

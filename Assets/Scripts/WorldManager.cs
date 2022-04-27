@@ -32,8 +32,11 @@ public class WorldManager : MonoBehaviour
 	public float tickSpeed;
 	public List<CargoType> cargoTypes = new List<CargoType>();
 	protected List<SimulatedShip> ships;
-	protected List<Settlement> settlements;
+	[SerializeField]
+	protected List<Settlement> settlements = new List<Settlement>();
 	private IEnumerator coroutine;
+	[SerializeField]
+	protected MapData map;
 
 	public string GetDate()
 	{
@@ -65,6 +68,7 @@ public class WorldManager : MonoBehaviour
 		coroutine = DoTick(tickSpeed);
 
 		StartCoroutine(coroutine);
+		map.AddSettlements(settlements);
 	}
 
 	private void Tick()
