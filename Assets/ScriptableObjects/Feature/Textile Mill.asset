@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   input: {fileID: 11400000, guid: 80ee14212d3449b48b6c6bace094f006, type: 2}
   output: {fileID: 11400000, guid: c500cc07c6a2d484e86d3b40f4ab41cf, type: 2}
+  required: 30
   conversionRatio: 0.4

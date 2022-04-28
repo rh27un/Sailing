@@ -10,30 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbde8e666601d1044bc02be4b0567534, type: 3}
-  m_Name: Paris
+  m_Name: Wimarie
   m_EditorClassIdentifier: 
   location:
-    x: 10
-    y: 10
+    x: 0
+    y: 0
     rotation: 0
   faction: 3
   features:
+  - {fileID: 11400000, guid: c58c9923ed1b0f547a8b23e3a84f2eee, type: 2}
   - {fileID: 11400000, guid: eec8f4c2b7e4c354f9e61efa30af48ba, type: 2}
   - {fileID: 11400000, guid: 00e9d8df4770da64db4deb026cde4173, type: 2}
   - {fileID: 11400000, guid: 4c99f37c742ef6e48b1d19ff7ac95e19, type: 2}
   - {fileID: 11400000, guid: e7dbf54ff0f0cc74c8e9e86c301cc225, type: 2}
   - {fileID: 11400000, guid: 2cd43168a59bbeb499eaee789de54ab8, type: 2}
   - {fileID: 11400000, guid: e7ad71c5d18ce6748929c36c3fb4e29e, type: 2}
-  - {fileID: 11400000, guid: bfaba2ccaaeef2e4bbb61a1fd2ddae57, type: 2}
   - {fileID: 11400000, guid: 75a3c0aeafc26254eb8e8f32ffa0c65d, type: 2}
   - {fileID: 11400000, guid: 829fc24bf2e40344e96ac73ffcf02c58, type: 2}
-  - {fileID: 11400000, guid: 13d0ee5207e98bc4db4467a90f674665, type: 2}
-  - {fileID: 11400000, guid: 0c6197ca322bfa84092eef1652d576b7, type: 2}
-  - {fileID: 11400000, guid: e08965653482cbe4c8a6aadde30323b5, type: 2}
   - {fileID: 11400000, guid: 41702f3ccaf87d14c84771135c7324b3, type: 2}
   - {fileID: 11400000, guid: 4d83bb754e0ad0f44ab599ce05fb3a57, type: 2}
-  - {fileID: 11400000, guid: 555b10850ecf7e3428723f50e7354266, type: 2}
-  - {fileID: 11400000, guid: 1e38e3c830a03ed4799fbd1dcb0b3c82, type: 2}
   - {fileID: 11400000, guid: 9ae876fe34526fe4b837bac4857c3dc6, type: 2}
   - {fileID: 11400000, guid: 2b1052817895f294a9255d77ebfab95d, type: 2}
-  - {fileID: 11400000, guid: 34d0f3164b3234a4b91bebd746403de4, type: 2}
+  - {fileID: 11400000, guid: bf20a7fa36705934581b3bc21058941c, type: 2}
+  - {fileID: 11400000, guid: 45d042361a098cf4cb1fafa2646b43c9, type: 2}

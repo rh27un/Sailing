@@ -100,6 +100,7 @@ public class MapData : MonoBehaviour
 
 	[SerializeField]
 	protected GameObject infoPanel;
+	protected WorldManager worldManager;
 
 	protected Transform shipList;
 	public Image DrawPoint(MapPoint mapPoint)
@@ -115,7 +116,6 @@ public class MapData : MonoBehaviour
 		rect.localScale *= imageScale;
 		rect.rotation = Quaternion.Euler(0f, 0f, mapPoint.coords.rotation);
 		Button btn = go.AddComponent<Button>();
-		btn.onClick.AddListener(HandleButtonClick);
 		
 		return image;
 	}
@@ -123,6 +123,7 @@ public class MapData : MonoBehaviour
 
 	public void Start()
 	{
+		worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
 		bgImage = GetComponent<Image>();
 		// Create map point for the player.
 		Transform playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
@@ -166,27 +167,27 @@ public class MapData : MonoBehaviour
         }
     }
 
-	public void HandleButtonClick()
-    {
-		var selectedPoint = mapPoints[EventSystem.current.currentSelectedGameObject.name];
-		infoPanel.transform.position = Input.mousePosition + Vector3.up * 10f;
-    }
-
 	public void Update()
 	{
+
 		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
 		eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 		List<RaycastResult> results = new List<RaycastResult>();
 		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
 		if(results.Count > 0 && results[0].gameObject != gameObject)
         {
-			infoPanel.SetActive(true);
-			infoPanel.transform.position = Input.mousePosition + Vector3.up * 130f;
-			var selectedPoint = mapPoints[results[0].gameObject.name];
-			var texts = infoPanel.GetComponentsInChildren<Text>();
-			texts[0].text = selectedPoint.name;
-			texts[1].text = selectedPoint.type.ToString();
-			texts[2].text = selectedPoint.faction.ToString();
+			if (mapPoints.ContainsKey(results[0].gameObject.name))
+			{
+				infoPanel.SetActive(true);
+				infoPanel.transform.position = Input.mousePosition + Vector3.up * 420f;
+				var selectedPoint = mapPoints[results[0].gameObject.name];
+				var texts = infoPanel.GetComponentsInChildren<Text>();
+				texts[0].text = selectedPoint.name;
+				texts[1].text = selectedPoint.type.ToString();
+				texts[2].text = selectedPoint.faction.ToString();
+				texts[3].text = worldManager.GetFeatures(selectedPoint.name);
+				texts[4].text = worldManager.GetInventory(selectedPoint.name);
+			}
         } else
         {
 			infoPanel.SetActive(false);

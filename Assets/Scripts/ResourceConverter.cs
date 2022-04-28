@@ -8,5 +8,6 @@ public class ResourceConverter : Feature
 {
 	public CargoType input;
 	public CargoType output;
+	public int required;
 	public float conversionRatio; // + L + no bitches
 }

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbde8e666601d1044bc02be4b0567534, type: 3}
+  m_Name: Hard Bargain
+  m_EditorClassIdentifier: 
+  location:
+    x: -20
+    y: -20
+    rotation: 0
+  faction: 2
+  features:
+  - {fileID: 11400000, guid: c58c9923ed1b0f547a8b23e3a84f2eee, type: 2}
+  - {fileID: 11400000, guid: bfaba2ccaaeef2e4bbb61a1fd2ddae57, type: 2}
+  - {fileID: 11400000, guid: 75a3c0aeafc26254eb8e8f32ffa0c65d, type: 2}
+  - {fileID: 11400000, guid: 829fc24bf2e40344e96ac73ffcf02c58, type: 2}
+  - {fileID: 11400000, guid: 0c6197ca322bfa84092eef1652d576b7, type: 2}
+  - {fileID: 11400000, guid: e08965653482cbe4c8a6aadde30323b5, type: 2}
+  - {fileID: 11400000, guid: 4d83bb754e0ad0f44ab599ce05fb3a57, type: 2}
+  - {fileID: 11400000, guid: 1e38e3c830a03ed4799fbd1dcb0b3c82, type: 2}
+  - {fileID: 11400000, guid: 2b1052817895f294a9255d77ebfab95d, type: 2}

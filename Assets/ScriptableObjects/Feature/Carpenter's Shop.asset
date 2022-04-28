@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ce4c90575f07ed449b2d1e84b5d2cde, type: 3}
-  m_Name: Steel Mill
+  m_Script: {fileID: 11500000, guid: fd4396cb5e0f0e94b9f019cf03a92ead, type: 3}
+  m_Name: Carpenter's Shop
   m_EditorClassIdentifier: 
-  input: {fileID: 11400000, guid: 8a58a6b1cf4d12b45aca02d829c63687, type: 2}
-  output: {fileID: 11400000, guid: 2fcf5705b922ba946a9f399f574a29f2, type: 2}
-  required: 15
-  conversionRatio: 1.1
+  cargoType: {fileID: 11400000, guid: 4b46c8c986be4f44998839ebfeba24f5, type: 2}
+  destroyedPerTick: 10

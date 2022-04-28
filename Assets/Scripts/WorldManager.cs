@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
+using System.Linq;
 public enum OrderState
 {
 	None = 0,                   
@@ -35,11 +35,11 @@ public class WorldManager : MonoBehaviour
 	[SerializeField]
 	protected List<Settlement> settlements = new List<Settlement>();
 	[SerializeField]
-	protected List<Settlement> liveSettlements = new List<Settlement>();
+	protected Dictionary<string,Settlement> liveSettlements = new Dictionary<string, Settlement>();
 	private IEnumerator coroutine;
 	[SerializeField]
 	protected MapData map;
-
+	protected bool paused;
 	public string GetDate()
 	{
 		string format = "MMMM " + Day(date.Day) + " yyy";
@@ -76,11 +76,27 @@ public class WorldManager : MonoBehaviour
         {
 			var live = Instantiate(settlement);
 			live.SetupInventory();
-			liveSettlements.Add(live);
+			m_Tick.AddListener(live.Tick);
+			liveSettlements.Add(live.name.Replace("(Clone)", string.Empty), live);
+			
         }
 	}
-
-	private void Tick()
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (paused)
+            {
+				paused = false;
+				Time.timeScale = 1f;
+            } else
+            {
+				paused = true;
+				Time.timeScale = 0f;
+            }
+        }
+    }
+    private void Tick()
 	{
 		date = date.AddDays(1);
 		m_Tick.Invoke();
@@ -94,6 +110,19 @@ public class WorldManager : MonoBehaviour
 			Tick();
 		}
 	}
+
+	public string GetInventory(string settlement)
+	{
+		if (liveSettlements.ContainsKey(settlement))
+			return liveSettlements[settlement].Inventory();
+		else return string.Empty;
+	}
+	public string GetFeatures(string settlement)
+    {
+		if(liveSettlements.ContainsKey(settlement))
+			return liveSettlements[settlement].Features();
+		else return string.Empty;
+    }
 }
 
 // Simulated AI ships, all ships on the map and in-game follow this logic except in battle

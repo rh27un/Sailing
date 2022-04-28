@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Tavern
   m_EditorClassIdentifier: 
   cargoType: {fileID: 11400000, guid: a3ca1134b862468419c05490acdbb64c, type: 2}
-  destroyedPerTick: 100
+  destroyedPerTick: 15
