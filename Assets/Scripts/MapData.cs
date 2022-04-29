@@ -32,6 +32,21 @@ public struct MapCoords
 	public int x;
 	public int y;
 	public float rotation;
+
+	public static float DistanceTo(MapCoords from, MapCoords to)
+    {
+		var x = from.x - to.x;
+		var y = from.y - to.y;
+		return Mathf.Sqrt(x * x + y * y);
+    }
+
+	public static float AngleBetween(MapCoords from, MapCoords to)
+	{
+		var x = from.x - to.x;
+		var y = from.y + to.y;
+		var angle = Mathf.Atan2(Mathf.Abs(x), Mathf.Abs(y));
+		return angle;
+	}
 	public static Vector2 ToVector2(MapCoords mapCoords)
 	{
 		return new Vector2(mapCoords.x, mapCoords.y);
@@ -46,6 +61,10 @@ public struct MapCoords
 		return new MapCoords((int)(transform.position.x), (int)(transform.position.z), transform.rotation.eulerAngles.y);
 	}
 
+	public Vector2 ToVector2()
+	{
+		return new Vector2(x, y);
+	}
     public override string ToString()
     {
 		return $"{x}, {y}";
@@ -64,6 +83,7 @@ public class MapData : MonoBehaviour
 	protected List<LiveMapPoint> livePoints = new List<LiveMapPoint>();
 
 	protected List<MapPoint> simulatedPoints = new List<MapPoint>();
+	protected List<ShipPoint> shipPoints = new List<ShipPoint>();
 
 	protected Image bgImage;
 	protected RectTransform bgRect;
@@ -167,6 +187,21 @@ public class MapData : MonoBehaviour
         }
     }
 
+	public void AddShip(TradeShip ship)
+	{
+		var mapPoint = new ShipPoint()
+		{
+			name = ship.shipData.shipName,
+			coords = ship.location,
+			type = MapType.Ship,
+			faction = MapFaction.None,
+			ship = ship
+		};
+
+		images.Add(mapPoint, DrawPoint(mapPoint));
+		shipPoints.Add(mapPoint);
+	}
+
 	public void Update()
 	{
 
@@ -196,6 +231,14 @@ public class MapData : MonoBehaviour
 		foreach (var point in livePoints)
 		{
 			point.coords = MapCoords.FromTransform(point.tracking);
+			var rect = images[point].GetComponent<RectTransform>();
+			rect.anchoredPosition = MapCoords.ToVector2(point.coords);
+			rect.rotation = Quaternion.Euler(0f, 0f, -point.coords.rotation);
+		}
+
+		foreach(var point in shipPoints)
+		{
+			point.coords = point.ship.location;
 			var rect = images[point].GetComponent<RectTransform>();
 			rect.anchoredPosition = MapCoords.ToVector2(point.coords);
 			rect.rotation = Quaternion.Euler(0f, 0f, -point.coords.rotation);

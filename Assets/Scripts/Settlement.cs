@@ -10,6 +10,7 @@ public static class Consts
 	public static float supplyMultiplier = 10f;
 	public static float supplyOffset = 50f;
 
+	public static float costPerDistance = 1f;
 	public static float CalculatePrice(float quantity, float supply, float demand)
     {
 		return 1 / (quantity + supplyOffset + supply * supplyMultiplier ) * (demand + demandOffset) * demandMultiplier;
@@ -34,6 +35,19 @@ public class CargoStores
     }
 }
 
+public class TradeRoute
+{
+	public Settlement destination;
+	public CargoType cargoType;
+	public float distance;
+	public float profit;
+
+    public override string ToString()
+    {
+		return $"{cargoType.name} to {destination.name.Replace("(Clone)", string.Empty)} ({distance}km): £{profit}";
+	}
+}
+
 [CreateAssetMenu(fileName = "Settlement", menuName = "Pirates/Settlement")]
 public class Settlement : ScriptableObject
 {
@@ -41,11 +55,63 @@ public class Settlement : ScriptableObject
 	public MapFaction faction;
 	private MapPoint associatedMapPoint;
 	private int treasury;
-	[SerializeField]
 	public Dictionary<string, CargoStores> cargoStores = new Dictionary<string, CargoStores>(); 
 	[SerializeField]
 	protected List<Feature> features = new List<Feature> ();
+	protected List<Settlement> neighbours = new List<Settlement> ();
+	protected List<TradeRoute> tradeRoutes = new List<TradeRoute> ();
 
+	public void AddNeighbour(Settlement neighbour)
+    {
+		if (neighbour != null)
+			neighbours.Add (neighbour);
+    }
+	public void AddNeighbour(IEnumerable<Settlement> neighbour)
+    {
+		neighbours.AddRange (neighbour);
+    }
+
+	public float GetPrice(CargoType type)
+    {
+		return cargoStores[type.name].price;
+    }
+
+	public bool WantsType(CargoType type)
+    {
+		return cargoStores.ContainsKey (type.name);
+    }
+
+	public List<TradeRoute> GetTradeRoutes()
+	{
+		return tradeRoutes.OrderByDescending(t => t.profit).ToList();
+	}
+
+	public int BuyGood(CargoType type, int num)
+	{
+		if(cargoStores.ContainsKey (type.name))
+		{
+			if(cargoStores[type.name].quantity >= num)
+			{
+				cargoStores[type.name].quantity -= num;
+				return num;
+			}
+			else
+			{
+				int r = num - cargoStores[type.name].quantity;
+				cargoStores[type.name].quantity = 0;
+				return r;
+			}
+		}
+		return 0;
+	}
+
+	public void SellGood(CargoType type, int num)
+	{
+		if (cargoStores.ContainsKey(type.name))
+		{
+			cargoStores[type.name].quantity += num;
+		}
+	}
 	public void Tick()
 	{
 		foreach (var feature in features)
@@ -74,6 +140,7 @@ public class Settlement : ScriptableObject
 		{
 			store.price = store.type.baseValue * Consts.CalculatePrice(store.quantity, store.supply, store.demand);
 		}
+		SetupTrade();
 	}
 	public string Features()
     {
@@ -92,6 +159,35 @@ public class Settlement : ScriptableObject
 			e += store.Value.ToString() + "\n";
         }
 		return e;
+    }
+	public string Trades()
+    {
+		string e = string.Empty;
+		foreach(var trade in tradeRoutes)
+        {
+			e += trade.ToString() + "\n";
+        }
+		return e;
+    }
+
+	public void SetupTrade()
+    {
+		tradeRoutes.Clear();
+		foreach(var neighbour in neighbours)
+        {
+			foreach(var store in cargoStores.Values)
+            {
+                if (neighbour.WantsType(store.type))
+                {
+					var profit = neighbour.GetPrice(store.type) - store.price;
+					var distance = MapCoords.DistanceTo(location, neighbour.location);
+					profit -= distance * Consts.costPerDistance;
+
+					tradeRoutes.Add(new TradeRoute() { destination = neighbour, cargoType = store.type, distance = distance, profit = profit });
+                }
+            }
+        }
+		tradeRoutes = tradeRoutes.OrderByDescending(t => t.profit).ToList();
     }
 	public void SetupInventory()
     {

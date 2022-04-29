@@ -16,3 +16,8 @@ public class MapPoint
 	}
 }
 
+public class ShipPoint : MapPoint
+{
+	public TradeShip ship;
+}
+

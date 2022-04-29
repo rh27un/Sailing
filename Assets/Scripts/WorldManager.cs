@@ -40,6 +40,7 @@ public class WorldManager : MonoBehaviour
 	[SerializeField]
 	protected MapData map;
 	protected bool paused;
+	
 	public string GetDate()
 	{
 		string format = "MMMM " + Day(date.Day) + " yyy";
@@ -76,10 +77,20 @@ public class WorldManager : MonoBehaviour
         {
 			var live = Instantiate(settlement);
 			live.SetupInventory();
+			live.AddNeighbour(liveSettlements.Values);
 			m_Tick.AddListener(live.Tick);
+			foreach(var neighbour in liveSettlements)
+            {
+				neighbour.Value.AddNeighbour(live);
+            }
 			liveSettlements.Add(live.name.Replace("(Clone)", string.Empty), live);
-			
+			var ship = new TradeShip();
+			ship.GenerateData();
+			ship.SetSettlement(live);
+			m_Tick.AddListener(ship.Tick);
+			map.AddShip(ship);
         }
+		
 	}
     private void Update()
     {
@@ -121,6 +132,12 @@ public class WorldManager : MonoBehaviour
     {
 		if(liveSettlements.ContainsKey(settlement))
 			return liveSettlements[settlement].Features();
+		else return string.Empty;
+    }
+	public string GetTrades(string settlement)
+    {
+		if (liveSettlements.ContainsKey(settlement))
+			return liveSettlements[settlement].Trades();
 		else return string.Empty;
     }
 }
