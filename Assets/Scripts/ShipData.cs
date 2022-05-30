@@ -57,4 +57,13 @@ public class ShipData
 			return remainder;
 		}
 	}
+	public string PrintCargo()
+	{
+		var e = string.Empty;
+		foreach(var cargus in cargo)
+		{
+			e += cargus.ToString() + "\n";
+		}
+		return e;
+	}
 }

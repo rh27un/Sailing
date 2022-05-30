@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Fort Ilfon
   m_EditorClassIdentifier: 
   location:
-    x: 0
-    y: 10
+    x: 10
+    y: 0
     rotation: 0
   faction: 3
   features:

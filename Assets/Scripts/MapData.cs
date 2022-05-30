@@ -42,10 +42,7 @@ public struct MapCoords
 
 	public static float AngleBetween(MapCoords from, MapCoords to)
 	{
-		var x = from.x - to.x;
-		var y = from.y + to.y;
-		var angle = Mathf.Atan2(Mathf.Abs(x), Mathf.Abs(y));
-		return angle;
+		return Mathf.Atan2(to.x - from.x, to.y - from.y) * Mathf.Rad2Deg;
 	}
 	public static Vector2 ToVector2(MapCoords mapCoords)
 	{
@@ -83,7 +80,7 @@ public class MapData : MonoBehaviour
 	protected List<LiveMapPoint> livePoints = new List<LiveMapPoint>();
 
 	protected List<MapPoint> simulatedPoints = new List<MapPoint>();
-	protected List<ShipPoint> shipPoints = new List<ShipPoint>();
+	protected Dictionary<string, ShipPoint> shipPoints = new Dictionary<string, ShipPoint>();
 
 	protected Image bgImage;
 	protected RectTransform bgRect;
@@ -120,7 +117,11 @@ public class MapData : MonoBehaviour
 
 	[SerializeField]
 	protected GameObject infoPanel;
+	[SerializeField]
+	protected GameObject townPanel;
 	protected WorldManager worldManager;
+
+	protected MapPoint selectedSettlement;
 
 	protected Transform shipList;
 	public Image DrawPoint(MapPoint mapPoint)
@@ -130,13 +131,17 @@ public class MapData : MonoBehaviour
 		Image image = go.AddComponent<Image>();
 		image.sprite = sprites[(int)mapPoint.type];
 		image.color = Color.clear;
+		image.useSpriteMesh = true;
 		RectTransform rect = go.GetComponent<RectTransform>();
 		//rect.SetParent(transform);
 		rect.anchoredPosition = MapCoords.ToVector2(mapPoint.coords) * zoom + mapOffset;
 		rect.localScale *= imageScale;
 		rect.rotation = Quaternion.Euler(0f, 0f, mapPoint.coords.rotation);
-		Button btn = go.AddComponent<Button>();
-		
+		if (!(mapPoint is ShipPoint))
+		{
+			Button btn = go.AddComponent<Button>();
+			btn.onClick.AddListener(TownInfo);
+		}
 		return image;
 	}
 
@@ -199,9 +204,44 @@ public class MapData : MonoBehaviour
 		};
 
 		images.Add(mapPoint, DrawPoint(mapPoint));
-		shipPoints.Add(mapPoint);
+		shipPoints.Add(ship.shipData.shipName, mapPoint);
 	}
-
+	public void Tick()
+	{
+		if(selectedSettlement != null)
+		{
+			var selectedPoint = selectedSettlement;
+			var texts = townPanel.GetComponentsInChildren<Text>();
+			texts[0].text = selectedPoint.name;
+			texts[1].text = selectedPoint.type.ToString();
+			texts[2].text = selectedPoint.faction.ToString();
+			texts[3].text = worldManager.GetFeatures(selectedPoint.name);
+			texts[4].text = worldManager.GetInventory(selectedPoint.name);
+		}
+	}
+	public void TownInfo()
+	{
+		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+		eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+		if (results.Count > 0 && results[0].gameObject != gameObject)
+		{
+			if (mapPoints.ContainsKey(results[0].gameObject.name))
+			{
+				selectedSettlement = mapPoints[results[0].gameObject.name];
+				townPanel.SetActive(true);
+				//townPanel.transform.position = Input.mousePosition + Vector3.up * 420f;
+				var selectedPoint = mapPoints[results[0].gameObject.name];
+				var texts = townPanel.GetComponentsInChildren<Text>();
+				texts[0].text = selectedPoint.name;
+				texts[1].text = selectedPoint.type.ToString();
+				texts[2].text = selectedPoint.faction.ToString();
+				texts[3].text = worldManager.GetFeatures(selectedPoint.name);
+				texts[4].text = worldManager.GetInventory(selectedPoint.name);
+			}
+		}
+	}
 	public void Update()
 	{
 
@@ -211,17 +251,17 @@ public class MapData : MonoBehaviour
 		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
 		if(results.Count > 0 && results[0].gameObject != gameObject)
         {
-			if (mapPoints.ContainsKey(results[0].gameObject.name))
+			if (shipPoints.ContainsKey(results[0].gameObject.name))
 			{
 				infoPanel.SetActive(true);
-				infoPanel.transform.position = Input.mousePosition + Vector3.up * 420f;
-				var selectedPoint = mapPoints[results[0].gameObject.name];
+				infoPanel.transform.SetAsLastSibling();
+				infoPanel.transform.position = Input.mousePosition + Vector3.up * 220f;
+				var selectedPoint = shipPoints[results[0].gameObject.name];
 				var texts = infoPanel.GetComponentsInChildren<Text>();
 				texts[0].text = selectedPoint.name;
 				texts[1].text = selectedPoint.type.ToString();
 				texts[2].text = selectedPoint.faction.ToString();
-				texts[3].text = worldManager.GetFeatures(selectedPoint.name);
-				texts[4].text = worldManager.GetInventory(selectedPoint.name);
+				texts[3].text = worldManager.GetInventory(selectedPoint.name);
 			}
         } else
         {
@@ -236,7 +276,7 @@ public class MapData : MonoBehaviour
 			rect.rotation = Quaternion.Euler(0f, 0f, -point.coords.rotation);
 		}
 
-		foreach(var point in shipPoints)
+		foreach(var point in shipPoints.Values)
 		{
 			point.coords = point.ship.location;
 			var rect = images[point].GetComponent<RectTransform>();

@@ -31,11 +31,12 @@ public class WorldManager : MonoBehaviour
 	public System.DateTime date;
 	public float tickSpeed;
 	public List<CargoType> cargoTypes = new List<CargoType>();
-	protected List<SimulatedShip> ships;
+	//protected List<SimulatedShip> ships;
 	[SerializeField]
 	protected List<Settlement> settlements = new List<Settlement>();
 	[SerializeField]
 	protected Dictionary<string,Settlement> liveSettlements = new Dictionary<string, Settlement>();
+	protected Dictionary<string, TradeShip> ships = new Dictionary<string, TradeShip>();
 	private IEnumerator coroutine;
 	[SerializeField]
 	protected MapData map;
@@ -72,6 +73,7 @@ public class WorldManager : MonoBehaviour
 
 		StartCoroutine(coroutine);
 		map.AddSettlements(settlements);
+		m_Tick.AddListener(map.Tick);
 
 		foreach(var settlement in settlements)
         {
@@ -85,7 +87,8 @@ public class WorldManager : MonoBehaviour
             }
 			liveSettlements.Add(live.name.Replace("(Clone)", string.Empty), live);
 			var ship = new TradeShip();
-			ship.GenerateData();
+			ship.GenerateData(settlements.IndexOf(settlement).ToString());
+			ships.Add(ship.shipData.shipName, ship);
 			ship.SetSettlement(live);
 			m_Tick.AddListener(ship.Tick);
 			map.AddShip(ship);
@@ -126,6 +129,8 @@ public class WorldManager : MonoBehaviour
 	{
 		if (liveSettlements.ContainsKey(settlement))
 			return liveSettlements[settlement].Inventory();
+		else if (ships.ContainsKey(settlement))
+			return ships[settlement].shipData.PrintCargo();
 		else return string.Empty;
 	}
 	public string GetFeatures(string settlement)

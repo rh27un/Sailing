@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   location:
     x: 10
-    y: -10
+    y: -20
     rotation: 0
   faction: 4
   features:

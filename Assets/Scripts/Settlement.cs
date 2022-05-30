@@ -175,7 +175,7 @@ public class Settlement : ScriptableObject
 		tradeRoutes.Clear();
 		foreach(var neighbour in neighbours)
         {
-			foreach(var store in cargoStores.Values)
+			foreach(var store in cargoStores.Values.Where(s => s.supply > 0))
             {
                 if (neighbour.WantsType(store.type))
                 {
